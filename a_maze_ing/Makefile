@@ -2,7 +2,7 @@ PYTHON_VERSION = python3
 MAIN_FILE = a_maze_ing.py
 CONFIG_FILE = config.txt
 
- PHONY: install run debug clean lint lint-strict re
+.PHONY: install run debug clean lint lint-strict re
 
 install:
 	$(PYTHON_VERSION) -m pip install -r requirements.txt
