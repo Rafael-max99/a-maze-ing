@@ -1,0 +1,24 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+
+#Type checker cache
+.mypy_cache/
+.pytest_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables (passwords, API keys, etc...)
+.env
+.env.local
+
+# Editors
+.vscode/
+.idea/
