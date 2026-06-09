@@ -1,4 +1,5 @@
 import sys
+import colors
 from classes import Cell, Grid, RecursiveBacktracker
 from parsing import config_parser, AnyError
 from mazedata import MazeData, grid_to_mazegen
@@ -15,19 +16,52 @@ def main() -> None:
         print(e)
         return
 
-    grid = Grid(vals[1], vals[0])
-    GREEN = "\033[92m"
-    RED = "\033[91m"
-    RESET = "\033[0m"
-    # Marca a entrada e a saída no grid
-    grid[vals[2][1], vals[2][0]].body = f"{GREEN} E {RESET}" # Entrada (ENTRY HEIGHT, ENTRY WIDTH)
-    grid[vals[3][1], vals[3][0]].body = f"{RED} X {RESET}" # Saída (EXIT HEIGHT, EXIT WIDTH)
+    current_color = 0
+    height = vals[1]
+    width = vals[0]
+
+    grid = Grid(height, width)
+    p_h = ((height - 5) // 2) + 4
+    p_w = ((width - 7) // 2) + 6
+    moves = [(0, -1), (0, -1), (-1, 0), (-1, 0), (0, 1), (0, 1), (-1, 0),
+             (-1, 0), (0, -1), (0, -1), (0, -4), (1, 0), (1, 0), (0, 1),
+             (0, 1), (1, 0), (1, 0)]
+
+    grid[p_h, p_w].is_42 = True
+    for h, w in moves:
+        p_h += h
+        p_w += w
+        grid[p_h, p_w].is_42 = True
 
     RecursiveBacktracker.on(grid)
-    print(grid)
-    # Converte o grid para MazeGenerator e escreve o arquivo de saída
-    mg = grid_to_mazegen(grid, vals[0], vals[1])
-    mg.write_output_file(vals[4], vals[2], vals[3])
+    while True:
+        print(grid)
+
+        print("=== A-Maze-ing ===")
+        print("1. Regenerate a new maze")
+        print("2. Show/Hide path from entry to exit")
+        print("3. Rotate maze colors")
+        print("4. Quit")
+        choice = int(input("Choice? (1-4): "))
+
+        if choice == 1:
+            grid = Grid(vals[1], vals[0])
+            RecursiveBacktracker.on(grid)
+            continue
+        elif choice == 2:
+            print("answer showed")
+            break
+        elif choice == 3:
+            current_color += 1
+            
+            if current_color >= len(colors.all_colors):
+                current_color = 0
+            grid.wall_color = colors.all_colors[current_color]
+        elif choice == 4:
+            break
+        else:
+            print("None of the above")
+            break
 
 
 if __name__ == "__main__":
