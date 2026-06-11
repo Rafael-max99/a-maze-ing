@@ -1,8 +1,7 @@
 import sys
 import colors
-from classes import Cell, Grid, RecursiveBacktracker
+from classes import Grid, RecursiveBacktracker
 from parsing import config_parser, AnyError
-from mazedata import MazeData, grid_to_mazegen
 
 
 def main() -> None:
@@ -21,21 +20,28 @@ def main() -> None:
     width = vals[0]
 
     grid = Grid(height, width)
-    p_h = ((height - 5) // 2) + 4
-    p_w = ((width - 7) // 2) + 6
-    moves = [(0, -1), (0, -1), (-1, 0), (-1, 0), (0, 1), (0, 1), (-1, 0),
-             (-1, 0), (0, -1), (0, -1), (0, -4), (1, 0), (1, 0), (0, 1),
-             (0, 1), (1, 0), (1, 0)]
 
-    grid[p_h, p_w].is_42 = True
-    for h, w in moves:
-        p_h += h
-        p_w += w
+    warning = ""
+
+    if height >= 7 and width >= 9:
+        p_h = ((height - 5) // 2) + 4
+        p_w = ((width - 7) // 2) + 6
+        moves = [(0, -1), (0, -1), (-1, 0), (-1, 0), (0, 1), (0, 1), (-1, 0),
+                 (-1, 0), (0, -1), (0, -1), (0, -4), (1, 0), (1, 0), (0, 1),
+                 (0, 1), (1, 0), (1, 0)]
+
         grid[p_h, p_w].is_42 = True
+        for h, w in moves:
+            p_h += h
+            p_w += w
+            grid[p_h, p_w].is_42 = True
+    else:
+        warning += f"{colors.YELLOW}⚠ The maze is too small to show 42 pattern {colors.RESET}\n"
 
     RecursiveBacktracker.on(grid)
     while True:
         print(grid)
+        print(warning)
 
         print("=== A-Maze-ing ===")
         print("1. Regenerate a new maze")
@@ -53,7 +59,7 @@ def main() -> None:
             break
         elif choice == 3:
             current_color += 1
-            
+
             if current_color >= len(colors.all_colors):
                 current_color = 0
             grid.wall_color = colors.all_colors[current_color]

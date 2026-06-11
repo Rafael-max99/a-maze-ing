@@ -95,14 +95,14 @@ class Grid:
 
     def __str__(self) -> str:
         output = "+" + "---+" * self.columns + "\n"
-        
+
         for row in self.each_row():
-            
+
             top = "|"
             bottom = "+"
-            
+
             for cell in row:
-                
+
                 if cell is None:
                     cell = Cell(-1, -1)
                 if cell.is_42:
@@ -111,14 +111,14 @@ class Grid:
                     body = "   "
                 east_boundary = " " if cell.linked(cell.east) else "|"
                 top += body + east_boundary
-                
+
                 south_boundary = "   " if cell.linked(cell.south) else "---"
                 corner = "+"
                 bottom += south_boundary + corner
-            
+
             output += top + "\n"
             output += bottom + "\n"
-        
+
         return f"{self.wall_color}{output}{colors.RESET}"
 
 
@@ -171,29 +171,3 @@ class RecursiveBacktracker:
                 stack.append(neighbor)
 
         return grid
-
-
-""" 
-            How to create the 42 pattern in the maze
-
-    I need create the pattern with cells that have no connection
-    So I created an attribute for cell called is_42 which the algorith will check for, and skip the cells
-marked for the pattern
-    The marking will happen right af the creation of the grid instance, I will calculate the middle,
-based on the width and hight, and once calculated I will call a function to mark all 18 cells nedded to
-complete the pattern
-    I also need to have separet coloring for those cells
-
-    if the grid is (15, 20)
-width:
-2 / (20 - 7) = 6
-6 + 7 = 13
-
-height:
-2 / (15 - 5) = 5
-5 + 5 = 10
-
-The pattern starts at (10, 13)
-moves = [(0, -1), (0, -1), (-1, 0), (-1, 0), (0, 1), (0, 1), (-1, 0), (-1, 0), (0, -1), (0, -1)
-         (0, -4), (1, 0), (1, 0), (0, 1), (0, 1), (1, 0), (1, 0)]
-"""

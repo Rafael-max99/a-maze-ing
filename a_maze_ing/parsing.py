@@ -1,8 +1,12 @@
-class NotPresentError(Exception):
-    pass
+import sys
+import colors
 
 
 class AnyError(Exception):
+    pass
+
+
+class NotPresentError(AnyError):
     pass
 
 
@@ -10,30 +14,30 @@ def get_dir(dir: str) -> tuple[int, int]:
     nbrs = dir.split(",")
     height = int(nbrs[0])
     width = int(nbrs[1])
-    return(height, width)
+    return (height, width)
 
 
 def is_present(keys: list, mand: str) -> None:
-    if not mand in keys:
-        raise NotPresentError(f"Need to add {mand} at config.txt")
+    if mand not in keys:
+        raise NotPresentError(f"{colors.RED}Need to add {mand} at config.txt")
 
 
-def parse_bool(value:str) -> bool:
+def parse_bool(value: str) -> bool:
     if value == "True":
         return True
     if value == "False":
         return False
-    raise ValueError(f"Invalid bool at config.txt: {value}")
+    raise ValueError(f"{colors.RED}Invalid bool at config.txt: {value}")
 
 
 def config_parser(f_name: str) -> list:
     try:
         f = open(f_name, "r")
     except FileNotFoundError as e:
-        print(e)
-        return
+        print(f"{colors.RED}{e}")
+        sys.exit(1)
 
-    #turn config.txt into a dictionary
+    # turn config.txt into a dictionary
     msg = f.read().split("\n")
     f.close()
     dic = {}
@@ -41,10 +45,14 @@ def config_parser(f_name: str) -> list:
     for var in msg:
         if var[0] == "#":
             continue
-        temp = var.split("=")
-        dic.update({temp[0]: temp[1]})
+        try:
+            temp = var.split("=")
+            dic.update({temp[0]: temp[1]})
+        except IndexError:
+            print(f"{colors.RED}Invalid Configuration")
+            sys.exit(1)
 
-    #check for mandatory keys
+    # check for mandatory keys
     mandatory = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"]
     keys = list(dic.keys())
     for mand in mandatory:
@@ -52,10 +60,10 @@ def config_parser(f_name: str) -> list:
             is_present(keys, mand)
         except NotPresentError as e:
             print(e)
-            raise AnyError("Error in parsing")
+            raise AnyError(f"{colors.RED}Mandatory key missing")
             return
 
-    #check if valid values
+    # check if valid values
     try:
         width = int(dic["WIDTH"])
         height = int(dic["HEIGHT"])
@@ -65,8 +73,15 @@ def config_parser(f_name: str) -> list:
         perfect = parse_bool(dic["PERFECT"])
     except ValueError as e:
         print(e)
-        raise AnyError("Error in parsing")
+        raise AnyError(f"{colors.RED}Invalid Value")
         return
+
+    if width < 2 or height < 2:
+        raise AnyError(f"{colors.RED}Invalid Value")
+    elif entry[0] > width or entry[1] > height:
+        raise AnyError(f"{colors.RED}Invalid Entry")
+    elif exits[0] > width or exits[1] > height:
+        raise AnyError(f"{colors.RED}Invalid Exit")
 
     values = [width, height, entry, exits, output_file, perfect]
     ret = []

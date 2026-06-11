@@ -1,6 +1,7 @@
-WIDTH=27
+WIDTH=1
 HEIGHT=17
-ENTRY=0,0
-EXIT=19,14
+ENTRY=5,0
+#djfnlçskrdbgçksdbçfk
+EXIT=19,18
 OUTPUT_FILE=maze.txt
 PERFECT=True
