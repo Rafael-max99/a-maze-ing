@@ -1,9 +1,9 @@
 import sys
 import random
-import colors
-from classes import Grid, RecursiveBacktracker
-from parsing import config_parser, AnyError
-from mazedata import MazeData, grid_to_mazegen
+import mazegen.colors as colors
+from mazegen.classes import Grid, RecursiveBacktracker
+from mazegen.parsing import config_parser, AnyError
+from mazegen.mazedata import MazeData, grid_to_mazegen
 
 
 def add_cycles(grid: Grid, count: int) -> None:
