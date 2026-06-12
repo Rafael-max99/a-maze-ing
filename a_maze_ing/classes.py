@@ -39,13 +39,16 @@ class Cell:
 
 
 class Grid:
-    def __init__(self, rows: int, columns: int) -> None:
+    def __init__(self, rows: int, columns: int, cl: int = 0) -> None:
         self.rows = rows
         self.columns = columns
 
-        self.wall_color = colors.CYAN
+        self.wall_color = colors.all_colors[cl]
         self.grid = self.prepare_grid()
         self.configure_cells()
+
+        self.entry = None
+        self.exit = None
 
     def prepare_grid(self) -> list[list[Cell]]:
         return [

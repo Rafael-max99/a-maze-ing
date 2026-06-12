@@ -14,6 +14,8 @@ def get_dir(dir: str) -> tuple[int, int]:
     nbrs = dir.split(",")
     height = int(nbrs[0])
     width = int(nbrs[1])
+    if height < 0 or width < 0:
+        raise AnyError(f"{colors.RED}Negative coordinates")
     return (height, width)
 
 
@@ -76,12 +78,15 @@ def config_parser(f_name: str) -> list:
         raise AnyError(f"{colors.RED}Invalid Value")
         return
 
+    print(0 > entry[0] > width)
     if width < 2 or height < 2:
-        raise AnyError(f"{colors.RED}Invalid Value")
-    elif entry[0] > width or entry[1] > height:
+        raise AnyError(f"{colors.RED}Invalid Sizes")
+    elif entry[0] >= width or entry[1] >= height:
         raise AnyError(f"{colors.RED}Invalid Entry")
-    elif exits[0] > width or exits[1] > height:
+    elif exits[0] >= width or exits[1] >= height:
         raise AnyError(f"{colors.RED}Invalid Exit")
+    elif entry[0] == exits[0] and entry[1] == exits[1]:
+        raise AnyError(f"{colors.RED}Invalid Entry/Exit")
 
     values = [width, height, entry, exits, output_file, perfect]
     ret = []
