@@ -7,6 +7,7 @@ class Cell:
         self.row = row
         self.column = column
         self.is_42 = False
+        self.is_path = False
 
         self.north = None
         self.east = None
@@ -83,6 +84,12 @@ class Grid:
 
         return self[row, column]
 
+    def is_entry(self, cell: Cell) -> bool:
+        return (cell.column, cell.row) == self.entry
+
+    def is_exit(self, cell: Cell) -> bool:
+        return (cell.column, cell.row) == self.exit
+
     def size(self) -> int:
         return self.rows * self.columns
 
@@ -110,6 +117,12 @@ class Grid:
                     cell = Cell(-1, -1)
                 if cell.is_42:
                     body = "█▇█"
+                elif self.is_entry(cell):
+                    body = "🚪 "
+                elif self.is_exit(cell):
+                    body = "🏁 "
+                elif cell.is_path:
+                    body = "✨ "
                 else:
                     body = "   "
                 east_boundary = " " if cell.linked(cell.east) else "|"
@@ -123,26 +136,6 @@ class Grid:
             output += bottom + "\n"
 
         return f"{self.wall_color}{output}{colors.RESET}"
-
-
-class BynaryTree:
-    @staticmethod
-    def on(grid):
-        for cell in grid.each_cell():
-
-            neighbors = []
-
-            if cell.north:
-                neighbors.append(cell.north)
-
-            if cell.east:
-                neighbors.append(cell.east)
-
-            if neighbors:
-                neighbor = random.choice(neighbors)
-                cell.link(neighbor)
-
-        return grid
 
 
 class RecursiveBacktracker:

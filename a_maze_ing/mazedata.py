@@ -73,6 +73,50 @@ class MazeData:
 
         return ""
 
+    def find_shortest_path_cells(self, start: tuple[int, int], end: 
+                                tuple[int, int]) -> list[tuple[int, int]]:
+        queue = deque([start])
+        visited = {start}
+        parent = {}
+
+        directions = {
+                0: (0, -1),  # North
+                1: (1, 0),  # East
+                2: (0, 1),  # South
+                3: (-1, 0)  # West
+                }
+
+        while queue:
+            x, y = queue.popleft()
+
+            if (x, y) == end:
+                break
+            
+            for direction, (dx, dy) in directions.items():
+                if self.can_move(x, y, direction):
+                    nx, ny = x + dx, y + dy
+                    
+                    if (nx, ny) not in visited:
+                        visited.add((nx, ny))
+                        parent[(nx, ny)] = (x, y)
+                        queue.append((nx, ny))
+
+        if end not in visited:
+            return []
+
+        path = []
+        current = end
+
+        while current != start:
+            path.append(current)
+            current = parent[current]
+
+        path.append(start)
+        path.reverse()
+
+        return path
+
+
     def to_hex_string(self) -> str:
         result = ""
 

@@ -78,7 +78,6 @@ def config_parser(f_name: str) -> list:
         raise AnyError(f"{colors.RED}Invalid Value")
         return
 
-    print(0 > entry[0] > width)
     if width < 2 or height < 2:
         raise AnyError(f"{colors.RED}Invalid Sizes")
     elif entry[0] >= width or entry[1] >= height:

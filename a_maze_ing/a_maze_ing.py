@@ -6,6 +6,36 @@ from parsing import config_parser, AnyError
 from mazedata import MazeData, grid_to_mazegen
 
 
+def add_cycles(grid: Grid, count: int) -> None:
+    added = 0
+
+    while added < count:
+        cell = grid.random_cell()
+        neighbors = [
+            neighbor for neighbor in cell.neighbors()
+            if not neighbor.is_42 and not cell.linked(neighbor)
+        ]
+        if not neighbors:
+            continue
+        neighbor = random.choice(neighbors)
+        cell.link(neighbor)
+        added += 1
+
+
+def create_grid(vals: list):
+    grid = Grid(vals[1], vals[0])
+    create_pattern(grid, vals[0], vals[1])
+    grid.entry = vals[2]
+    grid.exit = vals[3]
+    # random.seed(22)
+    RecursiveBacktracker.on(grid)
+    if not vals[5]:
+        add_cycles(grid, grid.size() // 20)
+    mg = grid_to_mazegen(grid, vals[0], vals[1])
+    mg.write_output_file(vals[4], vals[2], vals[3])
+    return (grid, mg)
+
+
 def create_pattern(grid: Grid, width: int, height: int) -> None:
     if height >= 7 and width >= 9:
         p_h = ((height - 5) // 2) + 4
@@ -20,10 +50,6 @@ def create_pattern(grid: Grid, width: int, height: int) -> None:
             p_h += h
             p_w += w
             grid[p_h, p_w].is_42 = True
-    else:
-        warning += f"{colors.YELLOW}⚠ The maze is too small to show 42 pattern {colors.RESET}\n"
-
-    # random.seed(22)
 
 
 def main() -> None:
@@ -38,15 +64,13 @@ def main() -> None:
         return
 
     current_color = 0
+    show_path = False
     warning = ""
-    height = vals[1]
-    width = vals[0]
+    if vals[1] < 7 or vals[0] < 9:
+        warning += (f"{colors.YELLOW}⚠ The maze is too small to show "
+                   f"42 pattern {colors.RESET}\n")
 
-    grid = Grid(height, width)
-    create_pattern(grid, width, height)
-    RecursiveBacktracker.on(grid)
-    mg = grid_to_mazegen(grid, vals[0], vals[1])
-    mg.write_output_file(vals[4], vals[2], vals[3])
+    grid, maze = create_grid(vals)
 
     while True:
         print(grid)
@@ -65,16 +89,25 @@ def main() -> None:
             continue
 
         if choice == 1:
-            grid = Grid(width, height, current_color)
-            create_pattern(grid, width, height)
-            RecursiveBacktracker.on(grid)
-            mg = grid_to_mazegen(grid, vals[0], vals[1])
-            mg.write_output_file(vals[4], vals[2], vals[3])
+            grid, maze = create_grid(vals)
             continue
 
         elif choice == 2:
-            print("answer showed")
-            break
+            if not show_path:
+                for cell in grid.each_cell():
+                    cell.is_path = False
+
+                path = maze.find_shortest_path_cells(vals[2], vals[3])
+
+                for x, y in path:
+                    grid[y, x].is_path = True
+                show_path = True
+
+            else:
+                for cell in grid.each_cell():
+                    cell.is_path = False
+                show_path = False
+            continue
 
         elif choice == 3:
             current_color += 1
