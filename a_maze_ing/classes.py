@@ -1,5 +1,5 @@
 import random
-import colors
+from . import colors
 
 
 class Cell:
