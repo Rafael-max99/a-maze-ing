@@ -90,6 +90,7 @@ def main() -> None:
 
         if choice == 1:
             grid, maze = create_grid(vals)
+            show_path = False
             continue
 
         elif choice == 2:
