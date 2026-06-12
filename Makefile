@@ -8,7 +8,7 @@ install:
 	$(PYTHON_VERSION) -m pip install -r requirements.txt
 
 run:
-	$(PYTHON_VERSION) $(MAIN_FILE) $(CONFIG_FILE)
+	clear && $(PYTHON_VERSION) $(MAIN_FILE) $(CONFIG_FILE)
 
 debug:
 	$(PYTHON_VERSION) -m pdb $(MAIN_FILE) $(CONFIG_FILE)
