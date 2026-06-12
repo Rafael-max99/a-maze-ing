@@ -111,8 +111,12 @@ class Grid:
                     cell = Cell(-1, -1)
                 if cell.is_42:
                     body = "█▇█"
+                elif self.is_entry(cell):
+                    body = "🚪 "
+                elif self.is_exit(cell):
+                    body = "🏁 "
                 elif cell.is_path:
-                    body = "(0)"
+                    body = "✨ "
                 else:
                     body = "   "
                 east_boundary = " " if cell.linked(cell.east) else "|"
